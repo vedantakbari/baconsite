@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bacon Bypass | Lightning-Fast Ad Link Bypasser</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* =========== CORE STYLES & VARIABLES =========== */
+        :root {
+            /* Color Palette */
+            --primary: #ff4757;
+            --primary-light: #ff6b81;
+            --primary-dark: #e84118;
+            --primary-gradient: linear-gradient(135deg, #ff4757, #ff6348);
+            --primary-gradient-alt: linear-gradient(90deg, #ff4757, #ff7f50);
+            --accent: #ffc048;
+            --dark: #0f0f0f;
+            --darker: #080808;
+            --darkest: #050505;
+            --light: #ffffff;
+            --light-gray: rgba(255, 255, 255, 0.7);
+            --muted: rgba(255, 255, 255, 0.5);
+            --discord: #5865f2;
+            
+            /* UI Elements */
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 20px 30px rgba(0, 0, 0, 0.2);
+            --shadow-primary: 0 8px 25px rgba(255, 71, 87, 0.35);
+            --transition-fast: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-slow: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            
+            /* Typography */
+            --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-md: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 2rem;
+            --font-size-4xl: 2.5rem;
+            --font-size-5xl: 3rem;
+            --font-size-6xl: 4rem;
+        }
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-main);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.5;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 71, 87, 0.08) 0%, transparent 30%),
+                radial-gradient(circle at 85% 30%, rgba(255, 71, 87, 0.08) 0%, transparent 30%);
+        }
+
+        ::selection {
+            background-color: var(--primary);
+            color: var(--light);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* =========== HEADER & NAVIGATION =========== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: rgba(15, 15, 15, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        header.sticky {
+            padding: 0.5rem 0;
+            background: rgba(8, 8, 8, 0.95);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            transition: var(--transition);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            transform-style: preserve-3d;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: translateY(-3px) rotateX(5deg);
+        }
+
+        .logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-gradient);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-primary);
+        }
+
+        .logo-text {
+            font-size: var(--font-size-2xl);
+            font-weight: 800;
+            color: var(--light);
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--light-gray);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: var(--transition-fast);
+        }
+
+        .nav-link:hover {
+            color: var(--light);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 0%;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: var(--transition-fast);
+            opacity: 0;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+            opacity: 1;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-gradient);
+            color: var(--light);
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--shadow-primary);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient-alt);
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.4);
+        }
+
+        .nav-button:hover::before {
+            left: 0;
+        }
+
+        .nav-button i {
+            font-size: 1.2rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 101;
+        }
+
+        /* =========== HERO SECTION =========== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 8rem 0 5rem;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxkZWZzPgogICAgPHBhdHRlcm4gaWQ9InBhdHRlcm4iIHg9IjAiIHk9IjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgcGF0dGVyblRyYW5zZm9ybT0icm90YXRlKDQ1KSI+CiAgICAgIDxjaXJjbGUgY3g9IjIiIGN5PSIyIiByPSIxIiBmaWxsPSIjZmY0NzU3IiBmaWxsLW9wYWNpdHk9IjAuMDMiLz4KICAgIDwvcGF0dGVybj4KICA8L2RlZnM+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPgo8L3N2Zz4=');
+            background-size: 20px 20px;
+            opacity: 0.4;
+            z-index: 1;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background-color: var(--primary);
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 5;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.2);
+            color: var(--primary-light);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-badge i {
+            font-size: var(--font-size-md);
+        }
+
+        .hero-title {
+            font-size: var(--font-size-6xl);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-description {
+            font-size: var(--font-size-xl);
+            color: var(--light-gray);
+            max-width: 700px;
+            margin-bottom: 3rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--primary-gradient);
+            color: var(--light);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--shadow-primary);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            font-size: var(--font-size-lg);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient-alt);
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(255, 71, 87, 0.4);
+        }
+
+        .btn-primary:hover::before {
+            left: 0;
+        }
+
+        .btn-primary i {
+            font-size: 1.2rem;
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            font-size: var(--font-size-lg);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .hero-browsers {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .browser-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--muted);
+            font-size: var(--font-size-sm);
+            transition: var(--transition);
+        }
+
+        .browser-badge:hover {
+            color: var(--light);
+        }
+
+        .browser-badge i {
+            font-size: 1.5rem;
+        }
+
+        /* =========== FEATURES SECTION =========== */
+        .features {
+            padding: 10rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 5rem;
+            position: relative;
+        }
+
+        .section-subtitle {
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: inline-block;
+            background: rgba(255, 71, 87, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: var(--font-size-sm);
+        }
+
+        .section-title {
+            font-size: var(--font-size-4xl);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        .section-description {
+            font-size: var(--font-size-lg);
+            color: var(--light-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 71, 87, 0.2);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-gradient);
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-primary);
+            font-size: 2rem;
+            color: var(--light);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+
+        .feature-description {
+            color: var(--light-gray);
+            margin-bottom: 1.5rem;
+            font-size: var(--font-size-md);
+            flex-grow: 1;
+        }
+
+        .feature-more {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: var(--font-size-sm);
+            align-self: flex-start;
+        }
+
+        .feature-more i {
+            transition: var(--transition);
+        }
+
+        .feature-more:hover {
+            color: var(--primary-light);
+        }
+
+        .feature-more:hover i {
+            transform: translateX(5px);
+        }
+
+        /* =========== HOW IT WORKS SECTION =========== */
+        .how-it-works {
+            padding: 10rem 0;
+            background-color: var(--darker);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .how-it-works::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(45deg, var(--darkest) 25%, transparent 25%), 
+                              linear-gradient(-45deg, var(--darkest) 25%, transparent 25%), 
+                              linear-gradient(45deg, transparent 75%, var(--darkest) 75%), 
+                              linear-gradient(-45deg, transparent 75%, var(--darkest) 75%);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            margin-top: 5rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+            position: relative;
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-gradient);
+            color: var(--light);
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-radius: 50%;
+            box-shadow: var(--shadow-primary);
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-content {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .step-content:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+
+        .step-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+
+        .step-description {
+            color: var(--light-gray);
+            font-size: var(--font-size-md);
+        }
+
+        .step-connector {
+            position: absolute;
+            top: 70px;
+            left: 35px;
+            width: 2px;
+            height: calc(100% - 50px);
+            background: linear-gradient(to bottom, var(--primary-light), rgba(255, 71, 87, 0.1));
+            z-index: 1;
+        }
+
+        /* =========== STATS SECTION =========== */
+        .stats {
+            padding: 8rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-top: 5rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem 1.5rem;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 71, 87, 0.2);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-number {
+            font-size: var(--font-size-5xl);
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--light-gray);
+            font-weight: 500;
+            font-size: var(--font-size-md);
+        }
+
+        /* =========== TESTIMONIALS =========== */
+        .testimonials {
+            padding: 10rem 0;
+            background-color: var(--darker);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 5rem;
+        }
+
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 71, 87, 0.2);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .quote-icon {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 3rem;
+            color: rgba(255, 71, 87, 0.1);
+        }
+
+        .testimonial-text {
+            font-size: var(--font-size-lg);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            color: var(--light-gray);
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            font-weight: 600;
+            font-size: var(--font-size-md);
+        }
+
+        .testimonial-info h4 {
+            font-size: var(--font-size-md);
+            margin-bottom: 0.25rem;
+            color: var(--light);
+        }
+
+        .testimonial-info p {
+            font-size: var(--font-size-sm);
+            color: var(--muted);
+            margin: 0;
+        }
+
+        /* =========== DISCORD SECTION =========== */
+        .discord {
+            padding: 10rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .discord-card {
+            background: rgba(88, 101, 242, 0.05);
+            border: 1px solid rgba(88, 101, 242, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 4rem;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .discord-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNzEgNTUiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik02MC4xMDQ4IDQuODk5NTdDNTUuNTc1MiAyLjg1NjY0IDUwLjcwMzQgMS4zODAxNyA0NS42MTQzIDAuNUMzOC41NjUzIDQuNTM0MDcgMzQuNzM5OSA5LjE0NzExIDM0LjczOTkgOS4xNDcxMUMzNC43Mzk5IDkuMTQ3MTEgMjUuNjgwMSA0Ljg2NDEgMTguNTg1NCAwLjVDMTMuNDk2MyAxLjM4MDE3IDguNjI0NDggMi44NTY2NCA0LjA5NTIxIDQuODk5NTdDMC41OTEzMDggMTIuMjA3NyAtMC41MjY2MzMgMjIuMDgyOCAwLjE1NTYzMyA2Ny4yMTk1QzYuNjM3NTcgNzEuODM1OSAxMi44MjggNzQuODgyMiAxOC45OTA4IDc3LjA3MTRDMjMuMDQ0OSA3My42NTU2IDI2LjY2NzkgNjkuODIyNCAyOS44MTE0IDY1LjY0NkMyNS44MjE4IDY0LjA5OTEgMjIuMDMxOCA2Mi4wODUyIDE4LjQ5NjYgNTkuNjIzNEMxOS40NzU1IDU4LjkwMTUgMjAuNDMyNiA1OC4xMzc4IDIxLjM0MTQgNTcuMzcwOEMyOC41MzIzIDYwLjc5MjIgMzYuNDY4NiA2Mi41NzE0IDQ0LjYwNDggNjIuNTcxNEM1Mi43MjQ3IDYyLjU3MTQgNjAuNjc3NyA2MC43OTIyIDY3Ljg2NTMgNTcuMzcwOEM2OC43NzQxIDU4LjEzNzggNjkuNzI4MyA1OC45MDE1IDcwLjcwOTIgNTkuNjIzNEM2Ny4xNzEgNjIuMDg1MiA2My4zNzY3IDY0LjA5OTEgNTkuMzk0NCA2NS42NDZDNjIuNTM0NyA2OS44MjI0IDY2LjE1NDUgNzMuNjU1NiA3MC4yMTk1IDc3LjA3MTRDNzYuMzgyMyA3NC44ODIyIDgyLjU3MDcgNzEuODM1OSA4OS4wNDg5IDY3LjIxOTVDODkuNzMxMiAyMi4wODI4IDg4LjYxMzIgMTIuMjA3NyA4NS4xMDk0IDQuODk5NTdaIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXIpIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQwX2xpbmVhciIgeDE9IjQ0LjYwMjEiIHkxPSIwLjUiIHgyPSI0NC42MDIxIiB5Mj0iNzcuMDcxNCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjNTg2NUYyIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzU4NjVGMiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 300px;
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .discord-title {
+            font-size: var(--font-size-4xl);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: var(--discord);
+        }
+
+        .discord-description {
+            font-size: var(--font-size-lg);
+            color: var(--light-gray);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+        }
+
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--discord);
+            color: var(--light);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(88, 101, 242, 0.35);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            font-size: var(--font-size-lg);
+        }
+
+        .discord-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--discord), #7289da);
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .discord-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(88, 101, 242, 0.4);
+        }
+
+        .discord-btn:hover::before {
+            left: 0;
+        }
+
+        .discord-btn i {
+            font-size: 1.4rem;
+        }
+
+        /* =========== FOOTER =========== */
+        footer {
+            background-color: var(--darker);
+            padding: 5rem 0 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 3rem;
+        }
+
+        .footer-branding {
+            flex: 0 0 300px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-gradient);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-primary);
+        }
+
+        .footer-logo-text {
+            font-size: var(--font-size-xl);
+            font-weight: 800;
+            color: var(--light);
+        }
+
+        .footer-logo-text span {
+            color: var(--primary);
+        }
+
+        .footer-description {
+            color: var(--light-gray);
+            margin-bottom: 1.5rem;
+            font-size: var(--font-size-md);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light-gray);
+            transition: var(--transition);
+        }
+
+        .social-link:hover {
+            background: var(--primary-gradient);
+            color: var(--light);
+            transform: translateY(-3px);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer-links h3 {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--light);
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--light-gray);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: var(--font-size-md);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .footer-links a i {
+            font-size: 0.75rem;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover i {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: var(--font-size-sm);
+        }
+
+        /* =========== ANIMATIONS =========== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideRight {
+            from { 
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .slide-up {
+            opacity: 0;
+            animation: slideUp 0.8s ease forwards;
+        }
+
+        .slide-right {
+            opacity: 0;
+            animation: slideRight 0.8s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        .delay-6 { animation-delay: 0.6s; }
+
+        /* =========== MEDIA QUERIES =========== */
+        @media (max-width: 1200px) {
+            :root {
+                --font-size-6xl: 3.5rem;
+                --font-size-5xl: 2.75rem;
+                --font-size-4xl: 2.25rem;
+            }
+            
+            .hero {
+                padding: 7rem 0 4rem;
+            }
+            
+            .features, .how-it-works, .testimonials, .discord {
+                padding: 7rem 0;
+            }
+        }
+
+        @media (max-width: 992px) {
+            :root {
+                --font-size-6xl: 3rem;
+                --font-size-5xl: 2.5rem;
+                --font-size-4xl: 2rem;
+            }
+            
+            .nav-menu {
+                display: none;
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 250px;
+                height: 100vh;
+                background: var(--darker);
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+                padding: 5rem 2rem 2rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+                z-index: 99;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .discord-card {
+                padding: 3rem 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --font-size-6xl: 2.5rem;
+                --font-size-5xl: 2.25rem;
+                --font-size-4xl: 1.75rem;
+                --font-size-3xl: 1.5rem;
+                --font-size-2xl: 1.25rem;
+                --font-size-xl: 1.125rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+                gap: 1rem;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .hero-browsers {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .step {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .step-connector {
+                display: none;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+            
+            .hero {
+                padding: 6rem 0 3rem;
+            }
+            
+            .features, .how-it-works, .testimonials, .discord {
+                padding: 5rem 0;
+            }
+            
+            .features-grid, .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .discord-card {
+                padding: 2.5rem 1.5rem;
+            }
+        }
+
+        /* Custom cursor styles */
+        body {
+            cursor: none; /* Hide the default cursor */
+        }
+
+        .cursor-ball, .cursor-outline {
+            position: fixed; /* Use fixed positioning to work with scrolling */
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-ball {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--primary);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+        }
+
+        .cursor-mousedown {
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255, 71, 87, 0.1);
+        }
+        
+        /* Discord member count display */
+        .discord-count-loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 71, 87, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor-ball"></div>
+    <div class="cursor-outline"></div>
+    
+    <!-- Header -->
+    <header id="header">
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-bacon"></i>
+                    </div>
+                    <div class="logo-text">Bacon<span>Bypass</span></div>
+                </a>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <a href="#features" class="nav-link">Features</a>
+                    <a href="#how-it-works" class="nav-link">How It Works</a>
+                    <a href="#testimonials" class="nav-link">Testimonials</a>
+                    <a href="#discord" class="nav-button">
+                        <i class="fab fa-discord"></i>
+                        Join Discord
+                    </a>
+                </div>
+                
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="particles" id="particles"></div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge slide-up">
+                    <i class="fas fa-star"></i>
+                    The Ultimate Ad Link Bypasser
+                </div>
+                <h1 class="hero-title slide-up delay-1">Skip Ad Links Instantly</h1>
+                <p class="hero-description slide-up delay-2">
+                    Bacon Bypass helps you avoid waiting on annoying ad links from Linkvertise, Work.ink, and 30+ more services, getting you directly to your destination.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#features" class="btn-primary slide-up delay-3">
+                        Explore Features
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#discord" class="btn-secondary slide-up delay-4">
+                        Join Our Community
+                        <i class="fab fa-discord"></i>
+                    </a>
+                </div>
+                <div class="hero-browsers slide-up delay-5">
+                    <div class="browser-badge">
+                        <i class="fab fa-chrome"></i>
+                        <span>Chrome</span>
+                    </div>
+                    <div class="browser-badge">
+                        <i class="fab fa-firefox-browser"></i>
+                        <span>Firefox</span>
+                    </div>
+                    <div class="browser-badge">
+                        <i class="fab fa-edge"></i>
+                        <span>Edge</span>
+                    </div>
+                    <div class="browser-badge">
+                        <i class="fab fa-safari"></i>
+                        <span>Safari</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">What Makes Us Special</span>
+                <h2 class="section-title">Powerful Features</h2>
+                <p class="section-description">
+                    Bacon Bypass offers a suite of powerful features designed to save you time and frustration when dealing with ad links.
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-title">Lightning Fast</h3>
+                    <p class="feature-description">
+                        Our bypass technology works instantly to skip ad links at rocket speeds, so you'll never waste time waiting again.
+                    </p>
+                    <a href="#" class="feature-more">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Free</h3>
+                    <p class="feature-description">
+                        The free tier is still the best free bypasser!
+                    </p>
+                    <a href="#" class="feature-more">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 class="feature-title">Wide Support</h3>
+                    <p class="feature-description">
+                        Works with 30+ services including Linkvertise, Work.ink, Lootlinks, AdFoc.us, and many more popular link shorteners.
+                    </p>
+                    <a href="#" class="feature-more">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="feature-title">Multiple Platforms</h3>
+                    <p class="feature-description">
+                        Available as a bot and userscript. Choose whatever works best for your needs.
+                    </p>
+                    <a href="#" class="feature-more">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3 class="feature-title">Secure Bypass</h3>
+                    <p class="feature-description">
+                        Our technology bypasses links without executing unsafe scripts or connecting to risky ad servers.
+                    </p>
+                    <a href="#" class="feature-more">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3 class="feature-title">24/7 Support</h3>
+                    <p class="feature-description">
+                        Our active Discord community and support team are available to help with any issues or questions.
+                    </p>
+                    <a href="#" class="feature-more">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Simple Process</span>
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-description">
+                    Bacon Bypass makes skipping ad links incredibly simple with just a few easy steps.
+                </p>
+            </div>
+            
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Copy the Ad Link</h3>
+                        <p class="step-description">
+                            Find the ad link you want to bypass (Linkvertise, Work.ink, etc.) and copy it to your clipboard.
+                        </p>
+                    </div>
+                    <div class="step-connector"></div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Paste Into Bacon Bypass</h3>
+                        <p class="step-description">
+                            Paste the link into our website or extension input field. No need to create accounts or complete captchas.
+                        </p>
+                    </div>
+                    <div class="step-connector"></div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Get Direct Link Instantly</h3>
+                        <p class="step-description">
+                            Our system instantly processes the link and redirects you to your destination without any long waiting or ads.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">By The Numbers</span>
+                <h2 class="section-title">Our Impact</h2>
+                <p class="section-description">
+                    Bacon Bypass has helped millions of users save time and avoid frustration.
+                </p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">50M+</div>
+                    <div class="stat-label">Links Bypassed</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">Services Supported</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number" id="discord-member-count">
+                        <span class="discord-count-loading"></span>
+                        <span>Loading...</span>
+                    </div>
+                    <div class="stat-label">Discord Members</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number">99.8%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">User Feedback</span>
+                <h2 class="section-title">What People Say</h2>
+                <p class="section-description">
+                    Don't take our word for it — here's what our users have to say about Bacon Bypass.
+                </p>
+            </div>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="quote-icon">
+                        <i class="fas fa-quote-right"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "Bacon Bypass has literally saved me hours of time. No more sitting through countdown timers or clicking through sketchy ads. It just works!"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">K8</div>
+                        <div class="testimonial-info">
+                            <h4>@KAHOOT0018</h4>
+                            <p>Student</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="quote-icon">
+                        <i class="fas fa-quote-right"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "I can't believe how fast this works. It bypasses Linkvertise in a split second when other services take forever. Plus, the Discord community is incredibly helpful."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">V7</div>
+                        <div class="testimonial-info">
+                            <h4>@VDNT7</h4>
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="quote-icon">
+                        <i class="fas fa-quote-right"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "After trying multiple bypass services, I can confidently say Bacon Bypass is the fastest and most reliable option out there. It works on every link I've tried!"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">JM</div>
+                        <div class="testimonial-info">
+                            <h4>James</h4>
+                            <p>Developer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Discord Section -->
+    <section class="discord" id="discord">
+        <div class="container">
+            <div class="discord-card">
+                <h2 class="discord-title">Join Our Discord Community</h2>
+                <p class="discord-description">
+                    Connect with other users, get support, report bugs, and stay updated on the latest Bacon Bypass news and features.
+                </p>
+                <a href="https://discord.gg/GSYuwcR7dt" class="discord-btn">
+                    <i class="fab fa-discord"></i>
+                    Join Discord Server
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-branding">
+                    <a href="#" class="footer-logo">
+                        <div class="footer-logo-icon">
+                            <i class="fas fa-bacon"></i>
+                        </div>
+                        <div class="footer-logo-text">Bacon<span>Bypass</span></div>
+                    </a>
+                    <p class="footer-description">
+                        The fastest and most reliable ad link bypasser available. Skip annoying ad links instantly and get to your content faster.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-reddit"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Features</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Lightning Fast Bypass</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Multiple Platforms</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Wide Service Support</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Completely Free</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Documentation</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Browser Extension</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> API Access</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Supported Services</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Bacon Bypass. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('sticky');
+            } else {
+                header.classList.remove('sticky');
+            }
+        });
+        
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menu-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            
+            menuToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+                
+                if (navMenu.classList.contains('active')) {
+                    menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+                } else {
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+            
+            // Close menu when clicking a link
+            const navLinks = document.querySelectorAll('.nav-link, .nav-button');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                });
+            });
+        });
+        
+        // Particles effect
+        document.addEventListener('DOMContentLoaded', function() {
+            const particles = document.getElementById('particles');
+            
+            for (let i = 0; i < 30; i++) {
+                createParticle();
+            }
+            
+            function createParticle() {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random properties
+                const size = Math.random() * 5 + 2;
+                const posX = Math.random() * 100;
+                const delay = Math.random() * 5;
+                const duration = Math.random() * 10 + 10;
+                
+                // Apply styles
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.bottom = '-20px';
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animation = `float-up ${duration}s ease-in-out ${delay}s infinite`;
+                
+                particles.appendChild(particle);
+            }
+        });
+        
+        // Scroll reveal animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const animateOnScroll = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Cards and grid items
+                        entry.target.querySelectorAll('.feature-card, .stat-card, .testimonial-card, .step').forEach((item, index) => {
+                            item.style.opacity = '0';
+                            item.style.animation = `slideUp 0.6s ease forwards ${0.1 * index}s`;
+                        });
+                        
+                        // Section headers
+                        if (entry.target.querySelector('.section-header')) {
+                            const header = entry.target.querySelector('.section-header');
+                            header.style.opacity = '0';
+                            header.style.animation = 'slideUp 0.6s ease forwards';
+                        }
+                        
+                        animateOnScroll.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('section').forEach(section => {
+                if (section.id !== 'home') {
+                    animateOnScroll.observe(section);
+                }
+            });
+        });
+        
+        // Custom cursor implementation
+        document.addEventListener('DOMContentLoaded', function() {
+            const cursorBall = document.querySelector('.cursor-ball');
+            const cursorOutline = document.querySelector('.cursor-outline');
+            
+            // Move the cursor elements with the mouse
+            document.addEventListener('mousemove', (e) => {
+                cursorBall.style.top = e.clientY + 'px';
+                cursorBall.style.left = e.clientX + 'px';
+                cursorOutline.style.top = e.clientY + 'px';
+                cursorOutline.style.left = e.clientX + 'px';
+            });
+            
+            // Add click effect
+            document.addEventListener('mousedown', () => {
+                cursorOutline.classList.add('cursor-mousedown');
+            });
+            
+            document.addEventListener('mouseup', () => {
+                cursorOutline.classList.remove('cursor-mousedown');
+            });
+            
+            // Add hover effect for interactive elements
+            const interactiveElements = document.querySelectorAll('a, button, .feature-card, .nav-link, .btn-primary, .btn-secondary');
+            
+            interactiveElements.forEach(element => {
+                element.addEventListener('mouseenter', () => {
+                    cursorOutline.style.width = '50px';
+                    cursorOutline.style.height = '50px';
+                });
+                
+                element.addEventListener('mouseleave', () => {
+                    cursorOutline.style.width = '40px';
+                    cursorOutline.style.height = '40px';
+                });
+            });
+        });
+        
+        // Discord Member Count Fetcher
+        function fetchDiscordMemberCount() {
+            fetch('https://discord.com/api/v9/invites/GSYuwcR7dt?with_counts=true')
+                .then(response => response.json())
+                .then(data => {
+                    const memberCount = data.approximate_member_count;
+                    const formattedCount = memberCount.toLocaleString();
+                    document.getElementById('discord-member-count').innerHTML = formattedCount;
+                })
+                .catch(error => {
+                    console.error('Error fetching Discord member count:', error);
+                    document.getElementById('discord-member-count').innerHTML = 'Error';
+                });
+        }
+        
+        // Fetch the member count initially
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchDiscordMemberCount();
+            
+            // Then refresh every 10 seconds
+            setInterval(fetchDiscordMemberCount, 10000);
+        });
+    </script>
+</body>
+</html>
