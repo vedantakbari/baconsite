@@ -64,6 +64,8 @@
         html {
             scroll-behavior: smooth;
             font-size: 16px;
+            height: 100%;
+            overflow-x: hidden;
         }
 
         body {
@@ -74,6 +76,34 @@
             background-image: 
                 radial-gradient(circle at 15% 50%, rgba(255, 71, 87, 0.08) 0%, transparent 30%),
                 radial-gradient(circle at 85% 30%, rgba(255, 71, 87, 0.08) 0%, transparent 30%);
+            /* Added for smooth scrolling effect */
+            transition: filter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: filter;
+            height: 100%;
+        }
+
+        /* Smoothscroll container */
+        .smoothscroll-wrapper {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-behavior: smooth;
+            perspective: 1px;
+            transform-style: preserve-3d;
+            perspective-origin: 0 0;
+            /* This enables momentum scrolling on iOS */
+            -webkit-overflow-scrolling: touch;
+            /* For motion blur effect during scroll */
+            transition: filter 0.3s ease-out;
+        }
+
+        #content {
+            transform-style: preserve-3d;
+            transition: filter 0.3s ease-out;
+        }
+
+        /* When scrolling is active */
+        .is-scrolling #content {
+            filter: blur(3px);
         }
 
         ::selection {
@@ -1251,401 +1281,445 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Motion Blur Trail Effect */
+        .motion-blur-trail {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .motion-blur-trail.active {
+            opacity: 1;
+        }
+        
+        .motion-blur-ghost {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+
+        /* Disable custom cursor on mobile devices */
+        @media (max-width: 768px), (pointer: coarse) {
+            body {
+                cursor: auto; /* Restore default cursor */
+            }
+            
+            .cursor-ball, .cursor-outline {
+                display: none; /* Hide custom cursor elements */
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="cursor-ball"></div>
-    <div class="cursor-outline"></div>
-    
-    <!-- Header -->
-    <header id="header">
-        <div class="container">
-            <nav>
-                <a href="#" class="logo">
-                    <div class="logo-icon">
-                        <i class="fas fa-bacon"></i>
-                    </div>
-                    <div class="logo-text">Bacon<span>Bypass</span></div>
-                </a>
-                
-                <div class="nav-menu" id="nav-menu">
-                    <a href="#features" class="nav-link">Features</a>
-                    <a href="#how-it-works" class="nav-link">How It Works</a>
-                    <a href="#testimonials" class="nav-link">Testimonials</a>
-                    <a href="#discord" class="nav-button">
-                        <i class="fab fa-discord"></i>
-                        Join Discord
-                    </a>
-                </div>
-                
-                <button class="menu-toggle" id="menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="particles" id="particles"></div>
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-badge slide-up">
-                    <i class="fas fa-star"></i>
-                    The Ultimate Ad Link Bypasser
-                </div>
-                <h1 class="hero-title slide-up delay-1">Skip Ad Links Instantly</h1>
-                <p class="hero-description slide-up delay-2">
-                    Bacon Bypass helps you avoid waiting on annoying ad links from Linkvertise, Work.ink, and 30+ more services, getting you directly to your destination.
-                </p>
-                <div class="hero-buttons">
-                    <a href="#features" class="btn-primary slide-up delay-3">
-                        Explore Features
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
-                    <a href="#discord" class="btn-secondary slide-up delay-4">
-                        Join Our Community
-                        <i class="fab fa-discord"></i>
-                    </a>
-                </div>
-                <div class="hero-browsers slide-up delay-5">
-                    <div class="browser-badge">
-                        <i class="fab fa-chrome"></i>
-                        <span>Chrome</span>
-                    </div>
-                    <div class="browser-badge">
-                        <i class="fab fa-firefox-browser"></i>
-                        <span>Firefox</span>
-                    </div>
-                    <div class="browser-badge">
-                        <i class="fab fa-edge"></i>
-                        <span>Edge</span>
-                    </div>
-                    <div class="browser-badge">
-                        <i class="fab fa-safari"></i>
-                        <span>Safari</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-subtitle">What Makes Us Special</span>
-                <h2 class="section-title">Powerful Features</h2>
-                <p class="section-description">
-                    Bacon Bypass offers a suite of powerful features designed to save you time and frustration when dealing with ad links.
-                </p>
-            </div>
+    <div id="smooth-wrapper" class="smoothscroll-wrapper">
+        <div id="content">
+            <div class="cursor-ball"></div>
+            <div class="cursor-outline"></div>
+            <div class="motion-blur-trail" id="motionBlurTrail"></div>
             
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h3 class="feature-title">Lightning Fast</h3>
-                    <p class="feature-description">
-                        Our bypass technology works instantly to skip ad links at rocket speeds, so you'll never waste time waiting again.
-                    </p>
-                    <a href="#" class="feature-more">
-                        Learn more <i class="fas fa-arrow-right"></i>
-                    </a>
+            <!-- Header -->
+            <header id="header">
+                <div class="container">
+                    <nav>
+                        <a href="#" class="logo">
+                            <div class="logo-icon">
+                                <i class="fas fa-bacon"></i>
+                            </div>
+                            <div class="logo-text">Bacon<span>Bypass</span></div>
+                        </a>
+                        
+                        <div class="nav-menu" id="nav-menu">
+                            <a href="#features" class="nav-link">Features</a>
+                            <a href="#how-it-works" class="nav-link">How It Works</a>
+                            <a href="#testimonials" class="nav-link">Testimonials</a>
+                            <a href="#discord" class="nav-button">
+                                <i class="fab fa-discord"></i>
+                                Join Discord
+                            </a>
+                        </div>
+                        
+                        <button class="menu-toggle" id="menu-toggle">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </nav>
                 </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Free</h3>
-                    <p class="feature-description">
-                        The free tier is still the best free bypasser!
-                    </p>
-                    <a href="#" class="feature-more">
-                        Learn more <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <h3 class="feature-title">Wide Support</h3>
-                    <p class="feature-description">
-                        Works with 30+ services including Linkvertise, Work.ink, Lootlinks, AdFoc.us, and many more popular link shorteners.
-                    </p>
-                    <a href="#" class="feature-more">
-                        Learn more <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-code"></i>
-                    </div>
-                    <h3 class="feature-title">Multiple Platforms</h3>
-                    <p class="feature-description">
-                        Available as a bot and userscript. Choose whatever works best for your needs.
-                    </p>
-                    <a href="#" class="feature-more">
-                        Learn more <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-lock"></i>
-                    </div>
-                    <h3 class="feature-title">Secure Bypass</h3>
-                    <p class="feature-description">
-                        Our technology bypasses links without executing unsafe scripts or connecting to risky ad servers.
-                    </p>
-                    <a href="#" class="feature-more">
-                        Learn more <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-headset"></i>
-                    </div>
-                    <h3 class="feature-title">24/7 Support</h3>
-                    <p class="feature-description">
-                        Our active Discord community and support team are available to help with any issues or questions.
-                    </p>
-                    <a href="#" class="feature-more">
-                        Learn more <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+            </header>
 
-    <!-- How It Works Section -->
-    <section class="how-it-works" id="how-it-works">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-subtitle">Simple Process</span>
-                <h2 class="section-title">How It Works</h2>
-                <p class="section-description">
-                    Bacon Bypass makes skipping ad links incredibly simple with just a few easy steps.
-                </p>
-            </div>
-            
-            <div class="steps-container">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Copy the Ad Link</h3>
-                        <p class="step-description">
-                            Find the ad link you want to bypass (Linkvertise, Work.ink, etc.) and copy it to your clipboard.
+            <!-- Hero Section -->
+            <section class="hero" id="home">
+                <div class="particles" id="particles"></div>
+                <div class="container">
+                    <div class="hero-content">
+                        <div class="hero-badge slide-up">
+                            <i class="fas fa-star"></i>
+                            The Ultimate Ad Link Bypasser
+                        </div>
+                        <h1 class="hero-title slide-up delay-1">Skip Ad Links Instantly</h1>
+                        <p class="hero-description slide-up delay-2">
+                            Bacon Bypass helps you avoid waiting on annoying ad links from Linkvertise, Work.ink, and 30+ more services, getting you directly to your destination.
+                        </p>
+                        <div class="hero-buttons">
+                            <a href="#features" class="btn-primary slide-up delay-3">
+                                Explore Features
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                            <a href="#discord" class="btn-secondary slide-up delay-4">
+                                Join Our Community
+                                <i class="fab fa-discord"></i>
+                            </a>
+                        </div>
+                        <div class="hero-browsers slide-up delay-5">
+                            <div class="browser-badge">
+                                <i class="fab fa-chrome"></i>
+                                <span>Chrome</span>
+                            </div>
+                            <div class="browser-badge">
+                                <i class="fab fa-firefox-browser"></i>
+                                <span>Firefox</span>
+                            </div>
+                            <div class="browser-badge">
+                                <i class="fab fa-edge"></i>
+                                <span>Edge</span>
+                            </div>
+                            <div class="browser-badge">
+                                <i class="fab fa-safari"></i>
+                                <span>Safari</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="features" id="features">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-subtitle">What Makes Us Special</span>
+                        <h2 class="section-title">Powerful Features</h2>
+                        <p class="section-description">
+                            Bacon Bypass offers a suite of powerful features designed to save you time and frustration when dealing with ad links.
                         </p>
                     </div>
-                    <div class="step-connector"></div>
+                    
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h3 class="feature-title">Lightning Fast</h3>
+                            <p class="feature-description">
+                                Our bypass technology works instantly to skip ad links at rocket speeds, so you'll never waste time waiting again.
+                            </p>
+                            <a href="#" class="feature-more">
+                                Learn more <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3 class="feature-title">Free</h3>
+                            <p class="feature-description">
+                                The free tier is still the best free bypasser!
+                            </p>
+                            <a href="#" class="feature-more">
+                                Learn more <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h3 class="feature-title">Wide Support</h3>
+                            <p class="feature-description">
+                                Works with 30+ services including Linkvertise, Work.ink, Lootlinks, AdFoc.us, and many more popular link shorteners.
+                            </p>
+                            <a href="#" class="feature-more">
+                                Learn more <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3 class="feature-title">Multiple Platforms</h3>
+                            <p class="feature-description">
+                                Available as a bot and userscript. Choose whatever works best for your needs.
+                            </p>
+                            <a href="#" class="feature-more">
+                                Learn more <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <h3 class="feature-title">Secure Bypass</h3>
+                            <p class="feature-description">
+                                Our technology bypasses links without executing unsafe scripts or connecting to risky ad servers.
+                            </p>
+                            <a href="#" class="feature-more">
+                                Learn more <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <h3 class="feature-title">24/7 Support</h3>
+                            <p class="feature-description">
+                                Our active Discord community and support team are available to help with any issues or questions.
+                            </p>
+                            <a href="#" class="feature-more">
+                                Learn more <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Paste Into Bacon Bypass</h3>
-                        <p class="step-description">
-                            Paste the link into our website or extension input field. No need to create accounts or complete captchas.
+            </section>
+
+            <!-- How It Works Section -->
+            <section class="how-it-works" id="how-it-works">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-subtitle">Simple Process</span>
+                        <h2 class="section-title">How It Works</h2>
+                        <p class="section-description">
+                            Bacon Bypass makes skipping ad links incredibly simple with just a few easy steps.
                         </p>
                     </div>
-                    <div class="step-connector"></div>
+                    
+                    <div class="steps-container">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h3 class="step-title">Copy the Ad Link</h3>
+                                <p class="step-description">
+                                    Find the ad link you want to bypass (Linkvertise, Work.ink, etc.) and copy it to your clipboard.
+                                </p>
+                            </div>
+                            <div class="step-connector"></div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h3 class="step-title">Paste Into Bacon Bypass</h3>
+                                <p class="step-description">
+                                    Paste the link into our website or extension input field. No need to create accounts or complete captchas.
+                                </p>
+                            </div>
+                            <div class="step-connector"></div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h3 class="step-title">Get Direct Link Instantly</h3>
+                                <p class="step-description">
+                                    Our system instantly processes the link and redirects you to your destination without any long waiting or ads.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Get Direct Link Instantly</h3>
-                        <p class="step-description">
-                            Our system instantly processes the link and redirects you to your destination without any long waiting or ads.
+            </section>
+
+            <!-- Stats Section -->
+            <section class="stats">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-subtitle">By The Numbers</span>
+                        <h2 class="section-title">Our Impact</h2>
+                        <p class="section-description">
+                            Bacon Bypass has helped millions of users save time and avoid frustration.
                         </p>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="stats">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-subtitle">By The Numbers</span>
-                <h2 class="section-title">Our Impact</h2>
-                <p class="section-description">
-                    Bacon Bypass has helped millions of users save time and avoid frustration.
-                </p>
-            </div>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">50M+</div>
-                    <div class="stat-label">Links Bypassed</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-number">30+</div>
-                    <div class="stat-label">Services Supported</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-number" id="discord-member-count">
-                        <span class="discord-count-loading"></span>
-                        <span>Loading...</span>
-                    </div>
-                    <div class="stat-label">Discord Members</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-number">99.8%</div>
-                    <div class="stat-label">Success Rate</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section class="testimonials" id="testimonials">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-subtitle">User Feedback</span>
-                <h2 class="section-title">What People Say</h2>
-                <p class="section-description">
-                    Don't take our word for it — here's what our users have to say about Bacon Bypass.
-                </p>
-            </div>
-            
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="quote-icon">
-                        <i class="fas fa-quote-right"></i>
-                    </div>
-                    <p class="testimonial-text">
-                        "Bacon Bypass has literally saved me hours of time. No more sitting through countdown timers or clicking through sketchy ads. It just works!"
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">K8</div>
-                        <div class="testimonial-info">
-                            <h4>@KAHOOT0018</h4>
-                            <p>Student</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">50M+</div>
+                            <div class="stat-label">Links Bypassed</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-number">30+</div>
+                            <div class="stat-label">Services Supported</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-number" id="discord-member-count">
+                                <span class="discord-count-loading"></span>
+                                <span>Loading...</span>
+                            </div>
+                            <div class="stat-label">Discord Members</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-number">99.8%</div>
+                            <div class="stat-label">Success Rate</div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="testimonial-card">
-                    <div class="quote-icon">
-                        <i class="fas fa-quote-right"></i>
-                    </div>
-                    <p class="testimonial-text">
-                        "I can't believe how fast this works. It bypasses Linkvertise in a split second when other services take forever. Plus, the Discord community is incredibly helpful."
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">V7</div>
-                        <div class="testimonial-info">
-                            <h4>@VDNT7</h4>
-                            <p></p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="testimonial-card">
-                    <div class="quote-icon">
-                        <i class="fas fa-quote-right"></i>
-                    </div>
-                    <p class="testimonial-text">
-                        "After trying multiple bypass services, I can confidently say Bacon Bypass is the fastest and most reliable option out there. It works on every link I've tried!"
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">JM</div>
-                        <div class="testimonial-info">
-                            <h4>James</h4>
-                            <p>Developer</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <!-- Discord Section -->
-    <section class="discord" id="discord">
-        <div class="container">
-            <div class="discord-card">
-                <h2 class="discord-title">Join Our Discord Community</h2>
-                <p class="discord-description">
-                    Connect with other users, get support, report bugs, and stay updated on the latest Bacon Bypass news and features.
-                </p>
-                <a href="https://discord.gg/GSYuwcR7dt" class="discord-btn">
-                    <i class="fab fa-discord"></i>
-                    Join Discord Server
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-branding">
-                    <a href="#" class="footer-logo">
-                        <div class="footer-logo-icon">
-                            <i class="fas fa-bacon"></i>
+            <!-- Testimonials Section -->
+            <section class="testimonials" id="testimonials">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-subtitle">User Feedback</span>
+                        <h2 class="section-title">What People Say</h2>
+                        <p class="section-description">
+                            Don't take our word for it — here's what our users have to say about Bacon Bypass.
+                        </p>
+                    </div>
+                    
+                    <div class="testimonials-grid">
+                        <div class="testimonial-card">
+                            <div class="quote-icon">
+                                <i class="fas fa-quote-right"></i>
+                            </div>
+                            <p class="testimonial-text">
+                                "Bacon Bypass has literally saved me hours of time. No more sitting through countdown timers or clicking through sketchy ads. It just works!"
+                            </p>
+                            <div class="testimonial-author">
+                                <div class="testimonial-avatar">K8</div>
+                                <div class="testimonial-info">
+                                    <h4>@KAHOOT0018</h4>
+                                    <p>Student</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="footer-logo-text">Bacon<span>Bypass</span></div>
-                    </a>
-                    <p class="footer-description">
-                        The fastest and most reliable ad link bypasser available. Skip annoying ad links instantly and get to your content faster.
-                    </p>
-                    <div class="footer-social">
-                        <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-reddit"></i></a>
+                        
+                        <div class="testimonial-card">
+                            <div class="quote-icon">
+                                <i class="fas fa-quote-right"></i>
+                            </div>
+                            <p class="testimonial-text">
+                                "I can't believe how fast this works. It bypasses Linkvertise in a split second when other services take forever. Plus, the Discord community is incredibly helpful."
+                            </p>
+                            <div class="testimonial-author">
+                                <div class="testimonial-avatar">V7</div>
+                                <div class="testimonial-info">
+                                    <h4>@VDNT7</h4>
+                                    <p></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="testimonial-card">
+                            <div class="quote-icon">
+                                <i class="fas fa-quote-right"></i>
+                            </div>
+                            <p class="testimonial-text">
+                                "After trying multiple bypass services, I can confidently say Bacon Bypass is the fastest and most reliable option out there. It works on every link I've tried!"
+                            </p>
+                            <div class="testimonial-author">
+                                <div class="testimonial-avatar">JM</div>
+                                <div class="testimonial-info">
+                                    <h4>James</h4>
+                                    <p>Developer</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="footer-links">
-                    <h3>Features</h3>
-                    <ul>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Lightning Fast Bypass</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Multiple Platforms</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Wide Service Support</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Completely Free</a></li>
-                    </ul>
+            </section>
+
+            <!-- Discord Section -->
+            <section class="discord" id="discord">
+                <div class="container">
+                    <div class="discord-card">
+                        <h2 class="discord-title">Join Our Discord Community</h2>
+                        <p class="discord-description">
+                            Connect with other users, get support, report bugs, and stay updated on the latest Bacon Bypass news and features.
+                        </p>
+                        <a href="https://discord.gg/GSYuwcR7dt" class="discord-btn">
+                            <i class="fab fa-discord"></i>
+                            Join Discord Server
+                        </a>
+                    </div>
                 </div>
-                
-                <div class="footer-links">
-                    <h3>Resources</h3>
-                    <ul>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Documentation</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Browser Extension</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> API Access</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Supported Services</a></li>
-                    </ul>
+            </section>
+
+            <!-- Footer -->
+            <footer>
+                <div class="container">
+                    <div class="footer-content">
+                        <div class="footer-branding">
+                            <a href="#" class="footer-logo">
+                                <div class="footer-logo-icon">
+                                    <i class="fas fa-bacon"></i>
+                                </div>
+                                <div class="footer-logo-text">Bacon<span>Bypass</span></div>
+                            </a>
+                            <p class="footer-description">
+                                The fastest and most reliable ad link bypasser available. Skip annoying ad links instantly and get to your content faster.
+                            </p>
+                            <div class="footer-social">
+                                <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                                <a href="#" class="social-link"><i class="fab fa-reddit"></i></a>
+                            </div>
+                        </div>
+                        
+                        <div class="footer-links">
+                            <h3>Features</h3>
+                            <ul>
+                                <li><a href="#"><i class="fas fa-chevron-right"></i> Lightning Fast Bypass</a></li>
+                                <li><a href="#"><i class="fas fa-chevron-right"></i> Multiple Platforms</a></li>
+                                <li><a href="#"><i class="fas fa-chevron-right"></i> Wide Service Support</a></li>
+                                <li><a href="#"><i class="fas fa-chevron-right"></i> Completely Free</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="footer-links">
+                            <h3>Resources</h3>
+                            <ul>
+                                <li><a href="#"><i class="fas fa-chevron-right"></i> Documentation</a></li>
+                                <li><a href="#"><i class="fas fa-chevron-right"></i> Browser Extension</a></li>
+                                <li><a href="#"><i class="fas fa-chevron-right"></i> API Access</a></li>
+                                <li><a href="#"><i class="fas fa-chevron-right"></i> Supported Services</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="footer-links">
+                            <h3>Company</h3>
+                            <ul>
+                                <li><a href="#"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                                <li><a href="#"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                                <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                                <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-bottom">
+                        <p>&copy; 2025 Bacon Bypass. All Rights Reserved.</p>
+                    </div>
                 </div>
-                
-                <div class="footer-links">
-                    <h3>Company</h3>
-                    <ul>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> About Us</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Contact</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2025 Bacon Bypass. All Rights Reserved.</p>
-            </div>
+            </footer>
         </div>
-    </footer>
+    </div>
 
     <!-- JavaScript -->
     <script>
@@ -1752,40 +1826,47 @@
         
         // Custom cursor implementation
         document.addEventListener('DOMContentLoaded', function() {
-            const cursorBall = document.querySelector('.cursor-ball');
-            const cursorOutline = document.querySelector('.cursor-outline');
+            // Check if device is mobile
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                            window.matchMedia("(max-width: 768px)").matches || 
+                            window.matchMedia("(pointer: coarse)").matches;
             
-            // Move the cursor elements with the mouse
-            document.addEventListener('mousemove', (e) => {
-                cursorBall.style.top = e.clientY + 'px';
-                cursorBall.style.left = e.clientX + 'px';
-                cursorOutline.style.top = e.clientY + 'px';
-                cursorOutline.style.left = e.clientX + 'px';
-            });
-            
-            // Add click effect
-            document.addEventListener('mousedown', () => {
-                cursorOutline.classList.add('cursor-mousedown');
-            });
-            
-            document.addEventListener('mouseup', () => {
-                cursorOutline.classList.remove('cursor-mousedown');
-            });
-            
-            // Add hover effect for interactive elements
-            const interactiveElements = document.querySelectorAll('a, button, .feature-card, .nav-link, .btn-primary, .btn-secondary');
-            
-            interactiveElements.forEach(element => {
-                element.addEventListener('mouseenter', () => {
-                    cursorOutline.style.width = '50px';
-                    cursorOutline.style.height = '50px';
+            if (!isMobile) {
+                const cursorBall = document.querySelector('.cursor-ball');
+                const cursorOutline = document.querySelector('.cursor-outline');
+                
+                // Move the cursor elements with the mouse
+                document.addEventListener('mousemove', (e) => {
+                    cursorBall.style.top = e.clientY + 'px';
+                    cursorBall.style.left = e.clientX + 'px';
+                    cursorOutline.style.top = e.clientY + 'px';
+                    cursorOutline.style.left = e.clientX + 'px';
                 });
                 
-                element.addEventListener('mouseleave', () => {
-                    cursorOutline.style.width = '40px';
-                    cursorOutline.style.height = '40px';
+                // Add click effect
+                document.addEventListener('mousedown', () => {
+                    cursorOutline.classList.add('cursor-mousedown');
                 });
-            });
+                
+                document.addEventListener('mouseup', () => {
+                    cursorOutline.classList.remove('cursor-mousedown');
+                });
+                
+                // Add hover effect for interactive elements
+                const interactiveElements = document.querySelectorAll('a, button, .feature-card, .nav-link, .btn-primary, .btn-secondary');
+                
+                interactiveElements.forEach(element => {
+                    element.addEventListener('mouseenter', () => {
+                        cursorOutline.style.width = '50px';
+                        cursorOutline.style.height = '50px';
+                    });
+                    
+                    element.addEventListener('mouseleave', () => {
+                        cursorOutline.style.width = '40px';
+                        cursorOutline.style.height = '40px';
+                    });
+                });
+            }
         });
         
         // Discord Member Count Fetcher
@@ -1810,6 +1891,124 @@
             // Then refresh every 10 seconds
             setInterval(fetchDiscordMemberCount, 10000);
         });
-    </script>
-</body>
-</html>
+
+        // Ultra Smooth Scrolling with Motion Blur
+        document.addEventListener('DOMContentLoaded', function() {
+            const content = document.getElementById('content');
+            const smoothWrapper = document.getElementById('smooth-wrapper');
+            const motionBlurTrail = document.getElementById('motionBlurTrail');
+            
+            // Number of ghost elements to create for motion blur
+            const numGhosts = 8;
+            const ghosts = [];
+            
+            // Create ghost elements for motion blur effect
+            for (let i = 0; i < numGhosts; i++) {
+                const ghost = document.createElement('div');
+                ghost.className = 'motion-blur-ghost';
+                ghost.style.opacity = (1 - i / numGhosts) * 0.15; // Decreasing opacity
+                motionBlurTrail.appendChild(ghost);
+                ghosts.push(ghost);
+            }
+            
+            let lastScrollTop = 0;
+            let ticking = false;
+            let scrollTimeout;
+            let isScrolling = false;
+            
+            // Create smooth scrolling effect with motion blur
+            smoothWrapper.addEventListener('scroll', function() {
+                const scrollTop = smoothWrapper.scrollTop;
+                const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
+                const scrollSpeed = Math.abs(scrollTop - lastScrollTop);
+                
+                // Apply blur effect based on scroll speed
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        // Only apply effects if scrolling at reasonable speed
+                        if (scrollSpeed > 5) {
+                            // Add scrolling class for blur effect
+                            if (!isScrolling) {
+                                document.body.classList.add('is-scrolling');
+                                content.style.filter = `blur(${Math.min(scrollSpeed * 0.05, 5)}px)`;
+                                motionBlurTrail.classList.add('active');
+                                isScrolling = true;
+                            }
+                            
+                            // Update ghost positions for motion trail
+                            for (let i = 0; i < ghosts.length; i++) {
+                                const delay = i * 30; // ms delay for each ghost
+                                const offsetY = scrollDirection === 'down' ? 
+                                    -delay * 0.5 : delay * 0.5;
+                                
+                                setTimeout(() => {
+                                    ghosts[i].style.transform = `translateY(${offsetY}px)`;
+                                }, i * 20);
+                            }
+                        }
+                        
+                        ticking = false;
+                        lastScrollTop = scrollTop;
+                    });
+                    
+                    ticking = true;
+                }
+                
+                // Clear the timeout on each scroll event
+                clearTimeout(scrollTimeout);
+                
+                // Set a timeout to reset effects after scrolling stops
+                scrollTimeout = setTimeout(function() {
+                    // Gradually reduce blur when scrolling stops
+                    const reduceBlur = setInterval(function() {
+                        const currentBlur = parseFloat(content.style.filter.replace('blur(', '').replace('px)', '')) || 0;
+                        
+                        if (currentBlur <= 0.1) {
+                            clearInterval(reduceBlur);
+                            content.style.filter = 'blur(0px)';
+                            document.body.classList.remove('is-scrolling');
+                            motionBlurTrail.classList.remove('active');
+                            
+                            // Reset ghost positions
+                            ghosts.forEach(ghost => {
+                                ghost.style.transform = 'translateY(0)';
+                            });
+                            
+                            isScrolling = false;
+                        } else {
+                            content.style.filter = `blur(${currentBlur * 0.7}px)`;
+                        }
+                    }, 30);
+                }, 100);
+            }, { passive: true });
+            
+            // Add touch events for mobile smooth scrolling
+            let touchStartY = 0;
+            let touchMoveY = 0;
+            
+            smoothWrapper.addEventListener('touchstart', function(e) {
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+            
+            smoothWrapper.addEventListener('touchmove', function(e) {
+                touchMoveY = e.touches[0].clientY;
+                const touchDiff = touchStartY - touchMoveY;
+                
+                // Apply motion blur based on touch speed
+                if (Math.abs(touchDiff) > 20) {
+                    content.style.filter = `blur(${Math.min(Math.abs(touchDiff) * 0.02, 5)}px)`;
+                    document.body.classList.add('is-scrolling');
+                }
+            }, { passive: true });
+            
+            smoothWrapper.addEventListener('touchend', function() {
+                // Gradually reduce blur
+                const reduceBlur = setInterval(function() {
+                    const currentBlur = parseFloat(content.style.filter.replace('blur(', '').replace('px)', '')) || 0;
+                    
+                    if (currentBlur <= 0.1) {
+                        clearInterval(reduceBlur);
+                        content.style.filter = 'blur(0px)';
+                        document.body.classList.remove('is-scrolling');
+                    } else {
+                        content.style.filter = `blur(${currentBlur *
