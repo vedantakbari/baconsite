@@ -1232,38 +1232,6 @@
                 padding: 2.5rem 1.5rem;
             }
         }
-
-        /* Custom cursor styles */
-        body {
-            cursor: none; /* Hide the default cursor */
-        }
-
-        .cursor-ball, .cursor-outline {
-            position: fixed; /* Use fixed positioning to work with scrolling */
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-        }
-
-        .cursor-ball {
-            width: 8px;
-            height: 8px;
-            background-color: var(--primary);
-        }
-
-        .cursor-outline {
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--primary);
-            transition: width 0.3s, height 0.3s, background-color 0.3s;
-        }
-
-        .cursor-mousedown {
-            width: 30px;
-            height: 30px;
-            background-color: rgba(255, 71, 87, 0.1);
-        }
         
         /* Discord member count display */
         .discord-count-loading {
@@ -1310,15 +1278,47 @@
             will-change: transform, opacity;
         }
 
-        /* Disable custom cursor on mobile devices */
-        @media (max-width: 768px), (pointer: coarse) {
-            body {
-                cursor: auto; /* Restore default cursor */
-            }
-            
-            .cursor-ball, .cursor-outline {
-                display: none; /* Hide custom cursor elements */
-            }
+        /* Custom Cursor Styles */
+        .cursor-outer, .cursor-inner {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s;
+            display: none; /* Hidden by default, shown via JS */
+        }
+
+        .cursor-outer {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--primary);
+            background: transparent;
+        }
+
+        .cursor-inner {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+        }
+
+        /* Hover state for cursor */
+        .cursor-outer.cursor-hover {
+            width: 60px;
+            height: 60px;
+            border-color: var(--primary-light);
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .cursor-inner.cursor-hover {
+            width: 12px;
+            height: 12px;
+            background: var(--light);
+        }
+
+        /* Hide cursor when on a clickable element */
+        .cursor-hidden {
+            opacity: 0;
         }
     </style>
 </head>
@@ -1326,8 +1326,6 @@
 <body>
     <div id="smooth-wrapper" class="smoothscroll-wrapper">
         <div id="content">
-            <div class="cursor-ball"></div>
-            <div class="cursor-outline"></div>
             <div class="motion-blur-trail" id="motionBlurTrail"></div>
             
             <!-- Header -->
@@ -1721,6 +1719,10 @@
         </div>
     </div>
 
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-outer" id="cursor-outer"></div>
+    <div class="cursor-inner" id="cursor-inner"></div>
+
     <!-- JavaScript -->
     <script>
         // Header scroll effect
@@ -1822,54 +1824,6 @@
                     animateOnScroll.observe(section);
                 }
             });
-        });
-        
-        // Custom cursor implementation
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if device is mobile/touch
-            const isTouchDevice = () => {
-                return (('ontouchstart' in window) || 
-                       (navigator.maxTouchPoints > 0) || 
-                       (navigator.msMaxTouchPoints > 0));
-            };
-            
-            // Only enable custom cursor on non-touch devices
-            if (!isTouchDevice()) {
-                const cursorBall = document.querySelector('.cursor-ball');
-                const cursorOutline = document.querySelector('.cursor-outline');
-                
-                // Move the cursor elements with the mouse
-                document.addEventListener('mousemove', (e) => {
-                    cursorBall.style.top = e.clientY + 'px';
-                    cursorBall.style.left = e.clientX + 'px';
-                    cursorOutline.style.top = e.clientY + 'px';
-                    cursorOutline.style.left = e.clientX + 'px';
-                });
-                
-                // Add click effect
-                document.addEventListener('mousedown', () => {
-                    cursorOutline.classList.add('cursor-mousedown');
-                });
-                
-                document.addEventListener('mouseup', () => {
-                    cursorOutline.classList.remove('cursor-mousedown');
-                });
-                
-                // Add hover effect for interactive elements
-                const interactiveElements = document.querySelectorAll('a, button, .feature-card, .nav-link, .btn-primary, .btn-secondary');
-                
-                interactiveElements.forEach(element => {
-                    element.addEventListener('mouseenter', () => {
-                        cursorOutline.style.width = '50px';
-                        cursorOutline.style.height = '50px';
-                    });
-                    
-                    element.addEventListener('mouseleave', () => {
-                        cursorOutline.style.width = '40px';
-                        cursorOutline.style.height = '40px';
-                    });
-                });
-            }
         });
         
         // Discord Member Count Fetcher
@@ -2018,6 +1972,75 @@
                     }
                 }, 30);
             }, { passive: true });
+        });
+
+        // Custom Cursor Implementation
+        document.addEventListener('DOMContentLoaded', function() {
+            const cursorOuter = document.getElementById('cursor-outer');
+            const cursorInner = document.getElementById('cursor-inner');
+            
+            // Variables for cursor position
+            let mouseX = 0;
+            let mouseY = 0;
+            let outerX = 0;
+            let outerY = 0;
+            
+            // Check if device is mobile
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            // Only show custom cursor on non-mobile devices
+            if (!isMobile) {
+                // Hide default cursor
+                document.body.style.cursor = 'none';
+                
+                // Show custom cursor elements
+                cursorOuter.style.display = 'block';
+                cursorInner.style.display = 'block';
+                
+                // Track mouse position
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    
+                    // Update inner cursor position immediately
+                    cursorInner.style.left = mouseX + 'px';
+                    cursorInner.style.top = mouseY + 'px';
+                });
+                
+                // Add hover effect for clickable elements
+                const clickables = document.querySelectorAll('a, button, input, .feature-card, .testimonial-card');
+                clickables.forEach(element => {
+                    element.addEventListener('mouseenter', () => {
+                        cursorOuter.classList.add('cursor-hover');
+                        cursorInner.classList.add('cursor-hover');
+                    });
+                    element.addEventListener('mouseleave', () => {
+                        cursorOuter.classList.remove('cursor-hover');
+                        cursorInner.classList.remove('cursor-hover');
+                    });
+                });
+                
+                // Animation loop for smooth outer cursor movement with delay
+                function animateCursor() {
+                    // Calculate distance between current outer position and mouse position
+                    const dx = mouseX - outerX;
+                    const dy = mouseY - outerY;
+                    
+                    // Move outer cursor with easing (delay effect)
+                    outerX += dx * 0.15;
+                    outerY += dy * 0.15;
+                    
+                    // Apply position to outer cursor
+                    cursorOuter.style.left = outerX + 'px';
+                    cursorOuter.style.top = outerY + 'px';
+                    
+                    // Continue animation loop
+                    requestAnimationFrame(animateCursor);
+                }
+                
+                // Start animation
+                animateCursor();
+            }
         });
     </script>
 </body>
